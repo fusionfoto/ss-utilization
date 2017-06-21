@@ -2,7 +2,12 @@ import argparse
 import sys
 from datetime import datetime, timedelta
 
+import logging
+
+from swiftstackapi import api
+
 DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
+
 
 def timestamp(stamp):
     """
@@ -87,10 +92,35 @@ def parse_args(args):
     return parsed
 
 
+def setup_logging():
+    log_level = logging.DEBUG
+    log_format = "%(asctime)s [%(threadName)s.%(name)s] " \
+                 "%(levelname)s: %(message)s"
+    logging.basicConfig(level=log_level, format=log_format)
+
+
 def main(args=None):
     if not args:
         args = sys.argv[1:]
 
     config = parse_args(args)
+
+    setup_logging()
+
+    logging.info("Starting SS-Utilization o-matic...")
+    logging.debug("Got configuration:")
+    for item in config.__dict__:
+        logging.debug("%s: %s " % (item, config.__dict__[item]))
+
+    try:
+        ssapiclient = api.SwiftStackAPIClient(controller=config.controller_host,
+                                              apiuser=config.ssapi_user,
+                                              apikey=config.ssapi_key)
+    except:
+        raise
+
+
+
+
 
 
