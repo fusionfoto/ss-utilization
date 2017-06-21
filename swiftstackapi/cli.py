@@ -4,18 +4,28 @@ from datetime import datetime, timedelta
 
 
 def timestamp(stamp):
-    '''
+    """
     returns datetime object for given ISO 8601 timestamp string
 
     :param stamp: timestamp in
     :return: datetime object for time stamp (timezone naive, but adjusted to UTC)
-    '''
-    dt = datetime.strptime(stamp[0:18], "%Y-%m-%dT%H:%M:%S")
-    if stamp[18] == '+':
-        dt += timedelta(hours=int(stamp[19:22]), minutes=int(stamp[23:]))
-    elif stamp[18] == '-':
-        dt -= timedelta(hours=int(stamp[19:22]), minutes=int(stamp[23:]))
+    """
+    dt = datetime.strptime(stamp[0:19], "%Y-%m-%dT%H:%M:%S")
+
+    if len(stamp) > 24:
+        raise ValueError("Malformed timezone offset")
+    elif len(stamp) > 19:
+        # process additional tzoffset
+        if stamp[19] == '+':
+            dt += timedelta(hours=int(stamp[20:22]), minutes=int(stamp[23:]))
+        elif stamp[19] == '-':
+            dt -= timedelta(hours=int(stamp[20:22]), minutes=int(stamp[23:]))
+        else:
+            # not valid tzoffset
+            raise ValueError("Not valid timezone offset")
+
     return dt
+
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
