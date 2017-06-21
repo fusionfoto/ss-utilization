@@ -2,6 +2,7 @@ import argparse
 import sys
 from datetime import datetime, timedelta
 
+DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
 
 def timestamp(stamp):
     """
@@ -10,7 +11,7 @@ def timestamp(stamp):
     :param stamp: timestamp in
     :return: datetime object for time stamp (timezone naive, but adjusted to UTC)
     """
-    dt = datetime.strptime(stamp[0:19], "%Y-%m-%dT%H:%M:%S")
+    dt = datetime.strptime(stamp[0:19], DTF_ISO8601)
 
     if len(stamp) > 24:
         raise ValueError("Malformed timezone offset")
@@ -60,14 +61,18 @@ def parse_args(args):
     parser.add_argument(
         "-s",
         "--start",
-        help="Start timestamp for utilization",
+        help="Start timestamp for utilization in the format "
+             "yyyy-mm-ddThh:mm:ss[+/-NNNN] (where NNNN is the timezone offset); "
+             "e.g.: 2013-08-29T19:24:44-0700",
         type=timestamp,
         dest="start_datetime"
     )
     parser.add_argument(
         "-e",
         "--end",
-        help="End datetime for utilization",
+        help="End timestamp for utilization in the format "
+             "yyyy-mm-ddThh:mm:ss[+/-NNNN] (where NNNN is the timezone offset); "
+             "e.g.: 2013-08-29T19:24:44-0700",
         type=timestamp,
         dest="end_datetime"
     )
