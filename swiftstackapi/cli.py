@@ -85,7 +85,7 @@ def parse_args(args):
         "-p",
         "--policy",
         help="Storage Policy in cluster",
-        type=str,
+        type=int,
         dest="storage_policy"
     )
     parsed = parser.parse_args(args)
@@ -116,6 +116,20 @@ def main(args=None):
         ssapiclient = api.SwiftStackAPIClient(controller=config.controller_host,
                                               apiuser=config.ssapi_user,
                                               apikey=config.ssapi_key)
+
+        util_accts = ssapiclient.get_accounts(cluster=config.cluster_id,
+                                              start_time=config.start_datetime,
+                                              end_time=config.end_datetime,
+                                              policy=config.storage_policy)
+        util_output = {}
+        for account in util_accts:
+            util_output[account] = ssapiclient.get_acct_util(
+                cluster=config.cluster_id,
+                account=account,
+                start_time=config.start_datetime,
+                end_time=config.end_datetime,
+                policy=config.storage_policy)
+
     except:
         raise
 
