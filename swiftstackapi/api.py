@@ -1,6 +1,6 @@
 import requests
 
-RESP_LIMIT = 20
+RESP_LIMIT = 500
 
 
 class SwiftStackAPIClient(object):
@@ -8,15 +8,25 @@ class SwiftStackAPIClient(object):
         self.endpoint = "https://" + controller + "/api/v1/"
         self.apiuser = apiuser
         self.apikey = apikey
-
-    def request(self, method=requests.get, path="", params=None):
+        self.session = requests.Session()
         headers = {'Authorization':
-                   'apikey %s:%s' % (self.apiuser, self.apikey)}
-        r = method(self.endpoint + path, headers=headers, params=params)
+                       'apikey %s:%s' % (self.apiuser, self.apikey)}
+
+        self.session.headers.update(headers)
+
+    def request(self, method="", path="", params=None):
+        VERB_MAP = {
+            'GET': self.session.get,
+            'PUT': self.session.put,
+            'HEAD': self.session.head,
+            'POST': self.session.post
+        }
+        params['limit'] = RESP_LIMIT
+        r = VERB_MAP[method.upper()](self.endpoint + path, params=params)
         return r.json()
 
     def get(self, path="", params=None):
-        return self.request(method=requests.get, path=path, params=params)
+        return self.request(method='get', path=path, params=params)
 
     def paginated_get(self, path="", params=None):
         offset = 0
