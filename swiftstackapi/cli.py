@@ -35,58 +35,66 @@ def timestamp(stamp):
 
 def parse_args(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument(
+    required_parser = parser.add_argument_group('required arguments')
+    required_parser.add_argument(
         "-m",
         "--controller",
         help="Hostname of controller",
         type=str,
-        dest="controller_host"
+        dest="controller_host",
+        required=True
     )
-    parser.add_argument(
+    required_parser.add_argument(
         "-c",
         "--cluster",
         help="ID of cluster on controller",
         type=int,
-        dest="cluster_id"
+        dest="cluster_id",
+        required=True
     )
-    parser.add_argument(
+    required_parser.add_argument(
         "-u",
         "--user",
         help="SwiftStack API User",
         type=str,
-        dest="ssapi_user"
+        dest="ssapi_user",
+        required=True
     )
-    parser.add_argument(
+    required_parser.add_argument(
         "-k",
         "--key",
         help="SwiftStack API Key",
         type=str,
-        dest="ssapi_key"
+        dest="ssapi_key",
+        required=True
     )
-    parser.add_argument(
+    required_parser.add_argument(
         "-s",
         "--start",
         help="Start timestamp for utilization in the format "
              "yyyy-mm-ddThh:mm:ss[+/-NNNN] (where NNNN is the timezone offset); "
              "e.g.: 2013-08-29T19:24:44-0700",
         type=timestamp,
-        dest="start_datetime"
+        dest="start_datetime",
+        required=True
     )
-    parser.add_argument(
+    required_parser.add_argument(
         "-e",
         "--end",
         help="End timestamp for utilization in the format "
              "yyyy-mm-ddThh:mm:ss[+/-NNNN] (where NNNN is the timezone offset); "
              "e.g.: 2013-08-29T19:24:44-0700",
         type=timestamp,
-        dest="end_datetime"
+        dest="end_datetime",
+        required=True
     )
-    parser.add_argument(
+    required_parser.add_argument(
         "-p",
         "--policy",
         help="Storage Policy in cluster",
         type=int,
-        dest="storage_policy"
+        dest="storage_policy",
+        required=True
     )
     parsed = parser.parse_args(args)
     return parsed
