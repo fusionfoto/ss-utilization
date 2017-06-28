@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import logging
 
-from swiftstackapi import api
+from swiftstackapi import api, output
 
 DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
 
@@ -129,6 +129,11 @@ def main(args=None):
                 start_time=config.start_datetime,
                 end_time=config.end_datetime,
                 policy=config.storage_policy)
+
+        with open(config.output_file, 'wb') as f:
+            writer = output.CsvUtilizationWriter(util_output, f, util_accts)
+            writer.write_csv()
+
 
     except:
         raise
