@@ -154,14 +154,14 @@ def main(args=None):
                                                   policy=p)
             logger.info("Got %d accounts in utilization period for policy %s" %
                         (len(util_accts), p))
-            util_output[p] = {}
             for account in util_accts:
+                util_output[account] = {}
                 records = ssapiclient.get_acct_util(cluster=config.cluster_id,
                                                     account=account,
                                                     start_time=config.start_datetime,
                                                     end_time=config.end_datetime,
                                                     policy=p)
-                util_output[p][account] = records
+                util_output[account][p] = records
                 logger.info("Got %d records for account %s in policy %s" % (len(records),
                                                                             account,
                                                                             p))
