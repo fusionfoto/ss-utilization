@@ -1,10 +1,10 @@
 import argparse
 import logging
+import os
 import sys
 from datetime import datetime, timedelta
 
 from swiftstackapi import api, output, version
-from swiftstackapi.api import DTF_ISO8601
 
 
 def timestamp(stamp):
@@ -14,7 +14,7 @@ def timestamp(stamp):
     :param stamp: timestamp in
     :return: datetime object for time stamp (timezone naive, but adjusted to UTC)
     """
-    dt = datetime.strptime(stamp[0:19], DTF_ISO8601)
+    dt = datetime.strptime(stamp[0:19], api.DTF_ISO8601)
 
     if len(stamp) > 24:
         raise ValueError("Malformed timezone offset")
@@ -105,15 +105,23 @@ def parse_args(args):
     parser.add_argument('-V', '--version', help='print version and exit',
                         action='version',
                         version='%(prog)s ' + version.version)
+    parser.add_argument('-v', '--verbose', help='verbose log messages',
+                        action='count')
     parsed = parser.parse_args(args)
     return parsed
 
 
-def setup_logging():
-    log_level = logging.DEBUG
+def setup_logging(name=None, level=logging.INFO):
+    log_level = level
     log_format = "%(asctime)s [%(name)s] " \
                  "%(levelname)s: %(message)s"
     logging.basicConfig(level=log_level, format=log_format)
+
+    if not name:
+        logger = logging.getLogger(__name__)
+    else:
+        logger = logging.getLogger(name)
+    return logger
 
 
 def main(args=None):
@@ -122,12 +130,16 @@ def main(args=None):
 
     config = parse_args(args)
 
-    setup_logging()
+    if config.verbose:
+        if config.verbose < 2:
+            logger = setup_logging(os.path.basename(sys.argv[0]), logging.DEBUG)
+    else:
+        logger = setup_logging(os.path.basename(sys.argv[0]), logging.INFO)
 
-    logging.info("Starting SS-Utilization o-matic...")
-    logging.debug("Got configuration:")
+    logger.info("Starting SS-Utilization o-matic...")
+    logger.debug("Got configuration:")
     for item in config.__dict__:
-        logging.debug("%s: %s " % (item, config.__dict__[item]))
+        logger.debug("%s: %s " % (item, config.__dict__[item]))
 
     try:
         ssapiclient = api.SwiftStackAPIClient(controller=config.controller_host,
@@ -138,18 +150,23 @@ def main(args=None):
                                               start_time=config.start_datetime,
                                               end_time=config.end_datetime,
                                               policy=config.storage_policy)
+        logger.info("Got %d accounts in utilization period" % len(util_accts))
         util_output = {}
         for account in util_accts:
-            util_output[account] = ssapiclient.get_acct_util(
-                cluster=config.cluster_id,
-                account=account,
-                start_time=config.start_datetime,
-                end_time=config.end_datetime,
-                policy=config.storage_policy)
+            records = ssapiclient.get_acct_util(cluster=config.cluster_id, account=account,
+                                                start_time=config.start_datetime,
+                                                end_time=config.end_datetime,
+                                                policy=config.storage_policy)
+            util_output[account] = records
+            logger.info("Got %d records for acount %s" % (len(records), account))
 
         with open(config.output_file, 'wb') as f:
             writer = output.CsvUtilizationWriter(util_output, f)
             writer.write_csv()
 
+        logger.info("Wrote %s" % config.output_file)
+
     except:
         raise
+
+    logger.info("Utilization Run Complete")

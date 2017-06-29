@@ -1,8 +1,11 @@
+import logging
+
 import requests
 
 RESP_LIMIT = 500
 DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
 
+logger = logging.getLogger(__name__)
 
 class SwiftStackAPIClient(object):
     def __init__(self, controller, apiuser, apikey):
@@ -14,6 +17,7 @@ class SwiftStackAPIClient(object):
                        'apikey %s:%s' % (self.apiuser, self.apikey)}
 
         self.session.headers.update(headers)
+        logger.debug("Initialized SwiftStackAPIClient")
 
     def request(self, method, path="", params={}):
         verb_map = {
@@ -23,6 +27,7 @@ class SwiftStackAPIClient(object):
             'POST': self.session.post
         }
         params['limit'] = RESP_LIMIT
+        logger.debug("request %s %s, (%s)" % (method, path, params))
         r = verb_map[method.upper()](self.endpoint + path, params=params)
         return r.json()
 
@@ -50,14 +55,20 @@ class SwiftStackAPIClient(object):
         acct_path = "clusters/%s/utilization/storage/%s/" % (cluster, policy)
         params = {"start": start_timestamp, "end": end_timestamp}
         storage_util = self.paginated_get(path=acct_path, params=params)
-        return [item['account'] for item in storage_util['objects']]
+        items = [item['account'] for item in storage_util['objects']]
+        logger.debug("get_accounts: (%d) accounts - %s" % (len(items), items))
+        return items
 
     def get_acct_util(self, cluster, account, start_time, end_time, policy):
         start_timestamp = self._datetime_str(start_time)
         end_timestamp = self._datetime_str(end_time)
-        util_detail_path = "clusters/%s/utilization/storage/%s/%s/detail/" % (cluster, policy, account)
+        util_detail_path = "clusters/%s/utilization/storage/%s/%s/detail/" % (cluster,
+                                                                              policy,
+                                                                              account)
         params = {'start': start_timestamp, 'end': end_timestamp}
         acct_hourly_util = self.paginated_get(path=util_detail_path, params=params)
-        return [item for item in acct_hourly_util['objects']]
+        records = [item for item in acct_hourly_util['objects']]
+        logger.debug("get_acct_util: (%d) records" % len(records))
+        return records
 
 
