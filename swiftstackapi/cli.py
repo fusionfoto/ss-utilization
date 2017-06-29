@@ -3,7 +3,7 @@ import logging
 import sys
 from datetime import datetime, timedelta
 
-from swiftstackapi import api, output
+from swiftstackapi import api, output, version
 from swiftstackapi.api import DTF_ISO8601
 
 
@@ -32,7 +32,6 @@ def timestamp(stamp):
 
 
 def parse_args(args):
-    # TODO version flag?
     parser = argparse.ArgumentParser()
     required_parser = parser.add_argument_group('required arguments')
     required_parser.add_argument(
@@ -103,6 +102,9 @@ def parse_args(args):
         dest="output_file",
         required=True
     )
+    parser.add_argument('-V', '--version', help='print version and exit',
+                        action='version',
+                        version='%(prog)s ' + version.version)
     parsed = parser.parse_args(args)
     return parsed
 
