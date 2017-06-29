@@ -1,6 +1,7 @@
 from unittest import TestCase
 from mock import Mock, patch
 
+from swiftstackapi import cli
 from swiftstackapi.api import SwiftStackAPIClient, RESP_LIMIT
 
 
@@ -104,12 +105,14 @@ class TestSwiftStackAPIClient(TestCase):
                         [item['account'] for item in get_response_2['objects']]
         expected_url = 'https://controller/api/v1/clusters/1234/utilization/storage/1/'
 
-        rval = self.client.get_accounts(1234, 'date_a', 'date_b', 1)
+        date_a = cli.timestamp('2000-01-01T00:00:00')
+        date_b = cli.timestamp('2000-01-02T00:00:00')
+        rval = self.client.get_accounts(1234, date_a, date_b, 1)
 
         self.assertEqual(rval, expected_rval)
         self.mock_session_obj.get.assert_called_with(expected_url,
-                                                     params={'start': 'date_a',
-                                                             'end': 'date_b',
+                                                     params={'start': '2000-01-01T00:00:00',
+                                                             'end': '2000-01-02T00:00:00',
                                                              'limit': 500,
                                                              'offset': 500})
         self.assertEqual(self.mock_session_obj.get.call_count, 2)
@@ -151,12 +154,14 @@ class TestSwiftStackAPIClient(TestCase):
         expected_rval = get_response_1['objects'] + get_response_2['objects']
         expected_url = 'https://controller/api/v1/clusters/1234/utilization/storage/1/AUTH_bob/detail/'
 
-        rval = self.client.get_acct_util(1234, 'AUTH_bob', 'date_a', 'date_b', 1)
+        date_a = cli.timestamp('2000-01-01T00:00:00')
+        date_b = cli.timestamp('2000-01-02T00:00:00')
+        rval = self.client.get_acct_util(1234, 'AUTH_bob', date_a, date_b, 1)
 
         self.assertEqual(rval, expected_rval)
         self.mock_session_obj.get.assert_called_with(expected_url,
-                                                     params={'start': 'date_a',
-                                                             'end': 'date_b',
+                                                     params={'start': '2000-01-01T00:00:00',
+                                                             'end': '2000-01-02T00:00:00',
                                                              'limit': 500,
                                                              'offset': 500})
         self.assertEqual(self.mock_session_obj.get.call_count, 2)

@@ -1,12 +1,10 @@
 import argparse
+import logging
 import sys
 from datetime import datetime, timedelta
 
-import logging
-
 from swiftstackapi import api, output
-
-DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
+from swiftstackapi.api import DTF_ISO8601
 
 
 def timestamp(stamp):
@@ -34,6 +32,7 @@ def timestamp(stamp):
 
 
 def parse_args(args):
+    # TODO version flag?
     parser = argparse.ArgumentParser()
     required_parser = parser.add_argument_group('required arguments')
     required_parser.add_argument(
@@ -96,13 +95,21 @@ def parse_args(args):
         dest="storage_policy",
         required=True
     )
+    required_parser.add_argument(
+        "-o",
+        "--output",
+        help="file to output utilization data",
+        type=str,
+        dest="output_file",
+        required=True
+    )
     parsed = parser.parse_args(args)
     return parsed
 
 
 def setup_logging():
     log_level = logging.DEBUG
-    log_format = "%(asctime)s [%(threadName)s.%(name)s] " \
+    log_format = "%(asctime)s [%(name)s] " \
                  "%(levelname)s: %(message)s"
     logging.basicConfig(level=log_level, format=log_format)
 
@@ -139,9 +146,8 @@ def main(args=None):
                 policy=config.storage_policy)
 
         with open(config.output_file, 'wb') as f:
-            writer = output.CsvUtilizationWriter(util_output, f, util_accts)
+            writer = output.CsvUtilizationWriter(util_output, f)
             writer.write_csv()
-
 
     except:
         raise

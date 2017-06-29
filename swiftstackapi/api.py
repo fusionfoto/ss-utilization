@@ -1,6 +1,7 @@
 import requests
 
 RESP_LIMIT = 500
+DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
 
 
 class SwiftStackAPIClient(object):
@@ -10,7 +11,7 @@ class SwiftStackAPIClient(object):
         self.apikey = apikey
         self.session = requests.Session()
         headers = {'Authorization':
-                   'apikey %s:%s' % (self.apiuser, self.apikey)}
+                       'apikey %s:%s' % (self.apiuser, self.apikey)}
 
         self.session.headers.update(headers)
 
@@ -40,15 +41,23 @@ class SwiftStackAPIClient(object):
 
         return result
 
-    # TODO handle datetime objects properly here
+    def _datetime_str(self, datetimeobj):
+        return datetimeobj.strftime(DTF_ISO8601)
+
     def get_accounts(self, cluster, start_time, end_time, policy):
+        start_timestamp = self._datetime_str(start_time)
+        end_timestamp = self._datetime_str(end_time)
         acct_path = "clusters/%s/utilization/storage/%s/" % (cluster, policy)
-        params = {"start": start_time, "end": end_time}
+        params = {"start": start_timestamp, "end": end_timestamp}
         storage_util = self.paginated_get(path=acct_path, params=params)
         return [item['account'] for item in storage_util['objects']]
 
     def get_acct_util(self, cluster, account, start_time, end_time, policy):
+        start_timestamp = self._datetime_str(start_time)
+        end_timestamp = self._datetime_str(end_time)
         util_detail_path = "clusters/%s/utilization/storage/%s/%s/detail/" % (cluster, policy, account)
-        params = {'start': start_time, 'end': end_time}
+        params = {'start': start_timestamp, 'end': end_timestamp}
         acct_hourly_util = self.paginated_get(path=util_detail_path, params=params)
         return [item for item in acct_hourly_util['objects']]
+
+

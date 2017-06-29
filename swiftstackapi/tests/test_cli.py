@@ -1,6 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
+import swiftstackapi.api
 from swiftstackapi import cli
 
 
@@ -9,9 +10,9 @@ class TestTimestamp(TestCase):
         good_date_tz = '2013-08-29T19:24:44-0700'
         good_date_offset = '2013-08-29T12:24:44'
         good_date_naive = '2013-08-29T19:24:44'
-        self.assertEquals(datetime.strptime(good_date_offset, cli.DTF_ISO8601),
+        self.assertEquals(datetime.strptime(good_date_offset, swiftstackapi.api.DTF_ISO8601),
                           cli.timestamp(good_date_tz))
-        self.assertEquals(datetime.strptime(good_date_naive, cli.DTF_ISO8601),
+        self.assertEquals(datetime.strptime(good_date_naive, swiftstackapi.api.DTF_ISO8601),
                           cli.timestamp(good_date_naive))
 
     def test_bad_timestatmp(self):
