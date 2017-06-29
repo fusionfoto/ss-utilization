@@ -11,10 +11,12 @@ controllers via the SwiftStack API
 ```
 usage: ss-util [-h] -m CONTROLLER_HOST -c CLUSTER_ID -u SSAPI_USER -k
                SSAPI_KEY -s START_DATETIME -e END_DATETIME -p STORAGE_POLICY
-               -o OUTPUT_FILE
+               -o OUTPUT_FILE [-V] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
+  -V, --version         print version and exit
+  -v, --verbose         verbose log messages
 
 required arguments:
   -m CONTROLLER_HOST, --controller CONTROLLER_HOST
