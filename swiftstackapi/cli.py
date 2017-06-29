@@ -158,7 +158,7 @@ def main(args=None):
                                                 end_time=config.end_datetime,
                                                 policy=config.storage_policy)
             util_output[account] = records
-            logger.info("Got %d records for acount %s" % (len(records), account))
+            logger.info("Got %d records for account %s" % (len(records), account))
 
         with open(config.output_file, 'wb') as f:
             writer = output.CsvUtilizationWriter(util_output, f)
