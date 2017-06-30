@@ -42,7 +42,7 @@ required arguments:
   -o OUTPUT_FILE, --output OUTPUT_FILE
                         file to output utilization data
 ```
-## Example Summary CSV Outpu
+## Example Summary CSV Output
 ```
 account,start,end,bytes_used
 AUTH_huda,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,2468423089759610
