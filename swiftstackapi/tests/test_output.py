@@ -123,6 +123,13 @@ class TestCsvUtilizationWriter(TestCase):
             """account1,2013-09-01 01:30:00Z,2013-09-01 02:30:00Z,5000,50000,500000,100.0,2\r\n""" \
             """account1,2013-09-01 02:30:00Z,2013-09-01 03:30:00Z,5000,50000,500000,100.0,2\r\n"""
 
+        self.expected_summary = {'account2': {'start': '2013-08-31 23:30:00Z',
+                                              'end': '2013-09-01 03:30:00Z',
+                                              'bytes_used': 1000000},
+                                 'account1': {'start': '2013-08-31 23:30:00Z',
+                                              'end': '2013-09-01 03:30:00Z',
+                                              'bytes_used': 1000000}}
+
     def test_get_fields(self):
         writer = output.CsvUtilizationWriter(self.test_data, "fakey", "fake_fields")
         fields = writer.get_fields(self.test_data)
@@ -146,3 +153,10 @@ class TestCsvUtilizationWriter(TestCase):
         writer.write_csv()
 
         self.assertMultiLineEqual(fake_csvfile.getvalue(), self.expected_csv)
+
+    def test_summarize(self):
+        writer = output.CsvUtilizationWriter(self.test_data, "fakey")
+
+        rval = writer.summarize()
+
+        self.assertEqual(rval, self.expected_summary)
