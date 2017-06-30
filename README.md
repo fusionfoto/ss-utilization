@@ -11,10 +11,11 @@ controllers via the SwiftStack API
 ```
 usage: ss-util [-h] -m CONTROLLER_HOST -c CLUSTER_ID -u SSAPI_USER -k
                SSAPI_KEY -s START_DATETIME -e END_DATETIME -p STORAGE_POLICY
-               [STORAGE_POLICY ...] -o OUTPUT_FILE [-V] [-v]
+               [STORAGE_POLICY ...] -o OUTPUT_FILE [--raw] [-V] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
+  --raw                 output raw hourly utilization hours; don't summarize
   -V, --version         print version and exit
   -v, --verbose         verbose log messages
 
@@ -41,8 +42,26 @@ required arguments:
   -o OUTPUT_FILE, --output OUTPUT_FILE
                         file to output utilization data
 ```
+## Example Summary CSV Outpu
+```
+account,start,end,bytes_used
+AUTH_huda,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,2468423089759610
+AUTH_brandon,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,118111600639
+brandon,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,0
+.logs,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,83688382493
+AUTH_pmcnully,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,5106983
+AUTH_kmullican,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,44
+.misplaced_objects,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,0
+AUTH_gateway,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,9039
+.utilization,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,0
+AUTH_swiftstack,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,44
+AUTH_standingmandan,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,0
+AUTH_standingmandan2,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,13130170906
+AUTH_bkruse,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,0
+standingmandan,2017-04-30 20:00:00Z,2017-05-31 20:00:00Z,0
+```
 
-## Example CSV Output
+## Example Raw CSV Output
 ```
 account,object_count,container_count,end,bytes_used,start,pct_complete,policy
 AUTH_huda,2306093,3505,2017-04-30 21:00:00Z,2336702843453199,2017-04-30 20:00:00Z,66.66666666666666,2
@@ -64,4 +83,5 @@ AUTH_brandon,5502,2,2017-04-30 23:00:00Z,118111600640,2017-04-30 22:00:00Z,66.66
 AUTH_brandon,5502,2,2017-05-01 00:00:00Z,118111600640,2017-04-30 23:00:00Z,66.66666666666666,2
 AUTH_brandon,5502,2,2017-05-01 01:00:00Z,118111600640,2017-05-01 00:00:00Z,66.66666666666666,2
 AUTH_brandon,5502,2,2017-05-01 02:00:00Z,118111600640,2017-05-01 01:00:00Z,66.66666666666666,2
+...
 ```
