@@ -103,6 +103,9 @@ def parse_args(args):
         dest="output_file",
         required=True
     )
+    parser.add_argument('--raw', help="output raw hourly utilization hours; don't summarize",
+                        action='store_true',
+                        dest="raw_output")
     parser.add_argument('-V', '--version', help='print version and exit',
                         action='version',
                         version='%(prog)s ' + version.version)
@@ -168,8 +171,10 @@ def main(args=None):
 
         with open(config.output_file, 'wb') as f:
             writer = output.CsvUtilizationWriter(util_output, f)
-            writer.summarize()
-            writer.write_raw_csv()
+            if config.raw_output:
+                writer.write_raw_csv()
+            else:
+                writer.write_summary_csv()
 
         logger.info("Wrote %s" % config.output_file)
 
