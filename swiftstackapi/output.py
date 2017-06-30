@@ -14,7 +14,7 @@ class CsvUtilizationWriter(object):
         else:
             self.fields = data_fields
 
-    def write_csv(self):
+    def write_raw_csv(self):
         writer = csv.DictWriter(self.output_file, self.fields)
         writer.writeheader()
         rows = 0
@@ -27,7 +27,21 @@ class CsvUtilizationWriter(object):
                     rows += 1
         logger.debug('wrote %d rows to %s' % (rows, self.output_file))
 
+    def write_summary_csv(self):
+        fields = ['account', 'start', 'end', 'bytes_used']
+        writer = csv.DictWriter(self.output_file, fields)
+        writer.writeheader()
+        rows = 0
+        summary = self.summarize()
+        for account in summary:
+            acct_sum = summary[account]
+            acct_sum['account'] = account
+            writer.writerow({field: acct_sum.get(field) for field in fields})
+            rows += 1
+        logger.debug('wrote %d rows to %s' % (rows, self.output_file))
+
     def summarize(self):
+        logger.debug('summarizing raw data')
         summary = {}
         for account in self.data:
             accountsum = float(0)
@@ -42,6 +56,7 @@ class CsvUtilizationWriter(object):
             summary[account] = {'start': starttime,
                                 'end': endtime,
                                 'bytes_used': int(accountsum)}
+        logger.debug('summarized %d accounts' % len(summary))
         return summary
 
     def get_fields(self, data):

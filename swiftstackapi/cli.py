@@ -169,7 +169,7 @@ def main(args=None):
         with open(config.output_file, 'wb') as f:
             writer = output.CsvUtilizationWriter(util_output, f)
             writer.summarize()
-            writer.write_csv()
+            writer.write_raw_csv()
 
         logger.info("Wrote %s" % config.output_file)
 
