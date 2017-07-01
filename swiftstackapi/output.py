@@ -33,7 +33,9 @@ class CsvUtilizationWriter(object):
         writer.writeheader()
         rows = 0
         summary = self.summarize()
-        for account in summary:
+        sorted_accounts = summary.keys()
+        sorted_accounts.sort()
+        for account in sorted_accounts:
             acct_sum = summary[account]
             acct_sum['account'] = account
             writer.writerow({field: acct_sum.get(field) for field in fields})
@@ -56,7 +58,17 @@ class CsvUtilizationWriter(object):
             summary[account] = {'start': starttime,
                                 'end': endtime,
                                 'bytes_used': int(accountsum)}
+        all_sum = sum(int(summary[account]['bytes_used']) for account in summary)
         logger.debug('summarized %d accounts' % len(summary))
+        summary['_TOTAL_BYTES'] = {'start': starttime,
+                                   'end': endtime,
+                                   'bytes_used': all_sum}
+        summary['_TOTAL_GBYTES'] = {'start': starttime,
+                                   'end': endtime,
+                                   'bytes_used': all_sum / 10**9}
+        summary['_TOTAL_TBYTES'] = {'start': starttime,
+                                   'end': endtime,
+                                   'bytes_used': all_sum / 10**12}
         return summary
 
     def get_fields(self, data):
