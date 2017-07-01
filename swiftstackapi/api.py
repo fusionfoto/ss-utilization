@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-RESP_LIMIT = 500
+RESP_LIMIT = 1000
 DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
 
 logger = logging.getLogger(__name__)
