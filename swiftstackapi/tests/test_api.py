@@ -113,8 +113,8 @@ class TestSwiftStackAPIClient(TestCase):
         self.mock_session_obj.get.assert_called_with(expected_url,
                                                      params={'start': '2000-01-01T00:00:00',
                                                              'end': '2000-01-02T00:00:00',
-                                                             'limit': 500,
-                                                             'offset': 500})
+                                                             'limit': 1000,
+                                                             'offset': 1000})
         self.assertEqual(self.mock_session_obj.get.call_count, 2)
 
     def test_get_acct_util(self):
@@ -162,6 +162,6 @@ class TestSwiftStackAPIClient(TestCase):
         self.mock_session_obj.get.assert_called_with(expected_url,
                                                      params={'start': '2000-01-01T00:00:00',
                                                              'end': '2000-01-02T00:00:00',
-                                                             'limit': 500,
-                                                             'offset': 500})
+                                                             'limit': 1000,
+                                                             'offset': 1000})
         self.assertEqual(self.mock_session_obj.get.call_count, 2)
