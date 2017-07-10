@@ -10,5 +10,8 @@ setup(
     description='utilization gathering tools for SwiftStack API',
     entry_points={
         'console_scripts': ['ss-util=swiftstackapi.cli:main']
-    }
+    },
+    install_requires=[
+        'requests'
+    ]
 )
