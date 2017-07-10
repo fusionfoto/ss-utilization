@@ -149,6 +149,7 @@ def main(args=None):
         ssapiclient = api.SwiftStackAPIClient(controller=config.controller_host,
                                               apiuser=config.ssapi_user,
                                               apikey=config.ssapi_key)
+        # TODO: all this logic needs to be in some unit-testable function!!
         util_output = {}
         for p in config.storage_policy:
             util_accts = ssapiclient.get_accounts(cluster=config.cluster_id,
@@ -158,7 +159,8 @@ def main(args=None):
             logger.info("Got %d accounts in utilization period for policy %s" %
                         (len(util_accts), p))
             for account in util_accts:
-                util_output[account] = {}
+                if account not in util_output:
+                    util_output[account] = {}
                 records = ssapiclient.get_acct_util(cluster=config.cluster_id,
                                                     account=account,
                                                     start_time=config.start_datetime,

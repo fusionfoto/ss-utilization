@@ -136,3 +136,12 @@ required arguments:
   -o OUTPUT_FILE, --output OUTPUT_FILE
                         file to output utilization data
 ```
+
+# Known Limitations
+
+Currently, it is required to know what timezone the cluster is in (or how the performance
+period is defined) and use that in the timestamp offsets in the start and end parameters. The
+SwiftStack API will return everything in UTC.
+
+Also, there is currently no way in the SwiftStack API to query what policies are in use on
+a particular cluster, so this information must be known.
