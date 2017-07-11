@@ -11,16 +11,20 @@ create a virtualenv and install in there (recommended).
 ### Standard Install
 
 1. Install Python 2.7 (for MacOS, see [Homebrew](https://brew.sh/))
-2. Download the latest release from the "releases" section on Github
-3. Run the command `pip install ss_utilization-X.Y-py2-none-any.whl`
+2. Download the latest release from the
+   [Releases](https://github.com/swiftstack/ss-utilization/releases) section
+3. Run the command `pip install ss_utilization-X.Y-py2-none-any.whl` (where `X.Y` is the
+   version downloaded in the previous step)
 
 ### Virtualenv (recommended)
 
 1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by running `virtualenv ss-util`
 2. `cd ss-util`
 3. `source ./bin/activate`
-4. Download the latest release from the "releases" section on Github to this directory
-5. Run the command `pip install ss_utilization-X.Y-py2-none-any.whl`
+4. Download the latest release from the
+   [Releases](https://github.com/swiftstack/ss-utilization/releases) section
+5. Run the command `pip install ss_utilization-X.Y-py2-none-any.whl` (where `X.Y` is the
+   version downloaded in the previous step)
 
 Every time you want to run the script, you will need to run the `source ./bin/activate`
 command, and then run the `deactivate` command to return to your normal environment.
