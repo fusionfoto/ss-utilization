@@ -161,4 +161,6 @@ period is defined) and use that in the timestamp offsets in the start and end pa
 SwiftStack API will return everything in UTC.
 
 Also, there is currently no way in the SwiftStack API to query what policies are in use on
-a particular cluster, so this information must be known.
+a particular cluster, so this information must be known. There is an open PT feature
+request for implementing an API call to let us get a list of policies (see
+[PT item here](https://www.pivotaltracker.com/story/show/148699957))
