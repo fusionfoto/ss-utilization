@@ -117,12 +117,25 @@ AUTH_huda,2,2453215,3063,2017-06-01 07:00:00Z,2590925040198939,2017-06-01 06:00:
 AUTH_huda,2,2453326,3063,2017-06-01 08:00:00Z,2591101721504170,2017-06-01 07:00:00Z,100.0
 ...
 ```
+### Using Environment Variables
+
+`ss-utilization` supports setting some parameters via environment variables instead of using the
+command-line parameters. These are:
+
+- `SSAPI_CONTROLLER`: Hostname of controller (`-m` param)
+- `SSAPI_CLUSTER`: ID of cluster (`-c` param)
+- `SSAPI_USER`: API user (`-u` param)
+- `SSAPI_KEY`: API key (`-k` param)
+
+The above can be used to set up an environment file that can be `source`d before running,
+providing a quasi-config file.
 
 ### Command-line Parameter Reference
 ```
-usage: ss-util [-h] -m CONTROLLER_HOST -c CLUSTER_ID -u SSAPI_USER -k
-               SSAPI_KEY -s START_DATETIME -e END_DATETIME -p STORAGE_POLICY
-               [STORAGE_POLICY ...] -o OUTPUT_FILE [--raw] [-V] [-v]
+usage: ss-util [-h] [-m CONTROLLER_HOST] [-c CLUSTER_ID] [-u SSAPI_USER]
+               [-k SSAPI_KEY] -s START_DATETIME -e END_DATETIME -p
+               STORAGE_POLICY [STORAGE_POLICY ...] -o OUTPUT_FILE [--raw] [-V]
+               [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -132,13 +145,13 @@ optional arguments:
 
 required arguments:
   -m CONTROLLER_HOST, --controller CONTROLLER_HOST
-                        Hostname of controller
+                        Hostname of controller (or env[SSAPI_CONTROLLER])
   -c CLUSTER_ID, --cluster CLUSTER_ID
-                        ID of cluster on controller
+                        ID of cluster on controller (or env[SSAPI_CLUSTER)
   -u SSAPI_USER, --user SSAPI_USER
-                        SwiftStack API User
+                        SwiftStack API User (or env[SSAPI_USER])
   -k SSAPI_KEY, --key SSAPI_KEY
-                        SwiftStack API Key
+                        SwiftStack API Key (or env[SSAPI_KEY])
   -s START_DATETIME, --start START_DATETIME
                         Start timestamp for utilization in the format yyyy-mm-
                         ddThh:mm:ss[+/-NNNN] (where NNNN is the timezone

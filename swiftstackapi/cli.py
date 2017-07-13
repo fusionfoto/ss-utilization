@@ -31,39 +31,63 @@ def timestamp(stamp):
     return dt
 
 
+# from https://stackoverflow.com/questions/10551117/setting-options-from-environment-variables-when-using-argparse
+# see also https://docs.python.org/2.7/library/argparse.html#argparse.Action
+class EnvDefault(argparse.Action):
+    def __init__(self, envvar, required=True, default=None, **kwargs):
+        if not default and envvar:
+            if envvar in os.environ:
+                default = os.environ[envvar]
+        if required and default:
+            required = False
+        super(EnvDefault, self).__init__(default=default, required=required,
+                                         **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, values)
+
+
 def parse_args(args):
     parser = argparse.ArgumentParser()
     required_parser = parser.add_argument_group('required arguments')
     required_parser.add_argument(
         "-m",
         "--controller",
-        help="Hostname of controller",
+        help="Hostname of controller (or env[SSAPI_CONTROLLER])",
         type=str,
         dest="controller_host",
+        envvar='SSAPI_CONTROLLER',
+        action=EnvDefault,
         required=True
     )
     required_parser.add_argument(
         "-c",
         "--cluster",
-        help="ID of cluster on controller",
+        help="ID of cluster on controller (or env[SSAPI_CLUSTER)",
         type=int,
         dest="cluster_id",
+        envvar='SSAPI_CLUSTER',
+        action=EnvDefault,
         required=True
     )
     required_parser.add_argument(
         "-u",
         "--user",
-        help="SwiftStack API User",
+        help="SwiftStack API User (or env[SSAPI_USER])",
         type=str,
         dest="ssapi_user",
+        envvar='SSAPI_USER',
+        action=EnvDefault,
         required=True
     )
     required_parser.add_argument(
         "-k",
         "--key",
-        help="SwiftStack API Key",
+        help="SwiftStack API Key (or env[SSAPI_KEY])",
         type=str,
         dest="ssapi_key",
+        envvar='SSAPI_KEY',
+        action=EnvDefault,
         required=True
     )
     required_parser.add_argument(
