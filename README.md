@@ -5,18 +5,10 @@ controllers via the SwiftStack API
 
 ## Installation
 
-`ss-utilization` is distributed as a Python Wheel. You can install this on your system or
-create a virtualenv and install in there (recommended).
+`ss-utilization` is distributed as a Python Wheel. You must install this in a Virtualenv
+or it doesn't work.
 
-### Standard Install
-
-1. Install Python 2.7 (for MacOS, see [Homebrew](https://brew.sh/))
-2. Download the latest release from the
-   [Releases](https://github.com/swiftstack/ss-utilization/releases) section
-3. Run the command `pip install ss_utilization-X.Y-py2-none-any.whl` (where `X.Y` is the
-   version downloaded in the previous step)
-
-### Virtualenv (recommended)
+### Install in a Virtualenv
 
 1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by running `virtualenv ss-util`
 2. `cd ss-util`
