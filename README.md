@@ -27,12 +27,12 @@ command, and then run the `deactivate` command to return to your normal environm
 ### Docker
 
 1. Download and install Docker for your platform: [Docker Download Link](https://www.docker.com/community-edition#/download)
-2. Once Docker is installed, get the container image with the command
-   `docker pull swiftstack/ssapi`
-3. After pulling the image, you can run the `ss-util` script as described below
-   by prefixing the command with the `docker run` command, as follows:
+2. Once Docker is installed, get the container image with the command `docker pull swiftstack/ssapi`
+3. After pulling the image, you can run the `ss-util` script as described below by prefixing the command with the `docker run` command, as follows:
 
-    docker run -v `pwd`:/output swiftstack/ssapi ss-util ...
+```
+$ docker run -v `pwd`:/output swiftstack/ssapi ss-util ...
+```
 
 ## Usage
 
