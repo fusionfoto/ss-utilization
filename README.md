@@ -5,8 +5,11 @@ controllers via the SwiftStack API
 
 ## Installation
 
-`ss-utilization` is distributed as a Python Wheel. You can install this on your system or
-create a virtualenv and install in there (recommended).
+`ss-utilization` is distributed as a Python Wheel and a Docker Image.
+ You can install the package directly on your system, create a virtualenv
+ and install in there, or use Docker to run the program.
+
+
 
 ### Standard Install
 
@@ -16,7 +19,7 @@ create a virtualenv and install in there (recommended).
 3. Run the command `pip install ss_utilization-X.Y-py2-none-any.whl` (where `X.Y` is the
    version downloaded in the previous step)
 
-### Virtualenv (recommended)
+### Virtualenv
 
 1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by running `virtualenv ss-util`
 2. `cd ss-util`
@@ -28,6 +31,16 @@ create a virtualenv and install in there (recommended).
 
 Every time you want to run the script, you will need to run the `source ./bin/activate`
 command, and then run the `deactivate` command to return to your normal environment.
+
+### Docker
+
+1. Download and install Docker for your platform: [Docker Download Link](https://www.docker.com/community-edition#/download)
+2. Once Docker is installed, get the container image with the command
+   `docker pull swiftstack/ssapi`
+3. After pulling the image, you can run the `ss-util` script as described below
+   by prefixing the command with the `docker run` command, as follows:
+
+    docker run -v `pwd`:/output swiftstack/ssapi ss-util ...
 
 ## Usage
 
