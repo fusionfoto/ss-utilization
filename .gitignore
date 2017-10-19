@@ -46,3 +46,8 @@ fabric.properties
 
 /.idea/
 /swiftstackapi/version.py
+.project
+build/
+dist/
+ss_utilization.egg-info/
+*.pyc
