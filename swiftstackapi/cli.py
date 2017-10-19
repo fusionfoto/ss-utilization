@@ -132,6 +132,8 @@ def parse_args(args):
                         version='%(prog)s ' + version.version)
     parser.add_argument('-v', '--verbose', help='verbose log messages',
                         action='count')
+    parser.add_argument('-q', '--quiet', help='disable all logging (overrides verbose)',
+                        action='store_true')
     parsed = parser.parse_args(args)
     return parsed
 
@@ -160,6 +162,9 @@ def main(args=None):
             logger = setup_logging(os.path.basename(sys.argv[0]), logging.DEBUG)
     else:
         logger = setup_logging(os.path.basename(sys.argv[0]), logging.INFO)
+
+    if config.quiet:
+        logging.disable(logging.CRITICAL)
 
     logger.info("Starting SS-Utilization o-matic...")
     logger.debug("Got configuration:")

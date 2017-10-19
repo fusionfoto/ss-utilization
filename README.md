@@ -139,15 +139,17 @@ providing a quasi-config file.
 usage: ss-util [-h] [-m CONTROLLER_HOST] [-c CLUSTER_ID] [-u SSAPI_USER]
                [-k SSAPI_KEY] -s START_DATETIME -e END_DATETIME -p
                STORAGE_POLICY [STORAGE_POLICY ...] [-o OUTPUT_FILE] [--raw]
-               [-V] [-v]
+               [-V] [-v] [-q]
 
 optional arguments:
   -h, --help            show this help message and exit
   -o OUTPUT_FILE, --output OUTPUT_FILE
-                        file to output utilization data
+                        file to output utilization data; if not specified,
+                        output will be printed
   --raw                 output raw hourly utilization hours; don't summarize
   -V, --version         print version and exit
   -v, --verbose         verbose log messages
+  -q, --quiet           disable all logging (overrides verbose)
 
 required arguments:
   -m CONTROLLER_HOST, --controller CONTROLLER_HOST
