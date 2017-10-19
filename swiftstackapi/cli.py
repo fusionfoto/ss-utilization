@@ -4,6 +4,8 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+import StringIO
+
 from swiftstackapi import api, output, version
 
 
@@ -63,7 +65,7 @@ def parse_args(args):
     required_parser.add_argument(
         "-c",
         "--cluster",
-        help="ID of cluster on controller (or env[SSAPI_CLUSTER)",
+        help="ID of cluster on controller (or env[SSAPI_CLUSTER])",
         type=int,
         dest="cluster_id",
         envvar='SSAPI_CLUSTER',
@@ -119,14 +121,9 @@ def parse_args(args):
         dest="storage_policy",
         required=True
     )
-    required_parser.add_argument(
-        "-o",
-        "--output",
-        help="file to output utilization data",
-        type=str,
-        dest="output_file",
-        required=True
-    )
+    parser.add_argument("-o", "--output", help="file to output utilization data; "
+                                               "if not specified, output will be printed",
+                        type=str, dest="output_file", default=None)
     parser.add_argument('--raw', help="output raw hourly utilization hours; don't summarize",
                         action='store_true',
                         dest="raw_output")
@@ -195,14 +192,24 @@ def main(args=None):
                                                                             account,
                                                                             p))
 
-        with open(config.output_file, 'wb') as f:
-            writer = output.CsvUtilizationWriter(util_output, f)
+        if config.output_file:
+            with open(config.output_file, 'wb') as f:
+                writer = output.CsvUtilizationWriter(util_output, f)
+                if config.raw_output:
+                    writer.write_raw_csv()
+                else:
+                    writer.write_summary_csv()
+                logger.info("Wrote %s" % config.output_file)
+        else:
+            fake_csvfile = StringIO.StringIO()
+            writer = output.CsvUtilizationWriter(util_output, fake_csvfile)
             if config.raw_output:
                 writer.write_raw_csv()
             else:
                 writer.write_summary_csv()
+            print fake_csvfile.getvalue()
+            fake_csvfile.close()
 
-        logger.info("Wrote %s" % config.output_file)
 
     except:
         raise

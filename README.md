@@ -9,7 +9,15 @@ controllers via the SwiftStack API
  You can install the package directly on your system, create a virtualenv
  and install in there, or use Docker to run the program.
 
+### Docker
 
+1. Download and install Docker for your platform: [Docker Download Link](https://www.docker.com/community-edition#/download)
+2. Once Docker is installed, get the container image with the command `docker pull swiftstack/ssapi`
+3. After pulling the image, you can run the `ss-util` script as described below by prefixing the command with the `docker run` command, as follows:
+
+```
+$ docker run -v `pwd`:/output swiftstack/ssapi ss-util ...
+```
 
 ### Install in a Virtualenv
 
@@ -23,16 +31,6 @@ controllers via the SwiftStack API
 
 Every time you want to run the script, you will need to run the `source ./bin/activate`
 command, and then run the `deactivate` command to return to your normal environment.
-
-### Docker
-
-1. Download and install Docker for your platform: [Docker Download Link](https://www.docker.com/community-edition#/download)
-2. Once Docker is installed, get the container image with the command `docker pull swiftstack/ssapi`
-3. After pulling the image, you can run the `ss-util` script as described below by prefixing the command with the `docker run` command, as follows:
-
-```
-$ docker run -v `pwd`:/output swiftstack/ssapi ss-util ...
-```
 
 ## Usage
 
@@ -60,7 +58,8 @@ $ ss-util --controller controller-hostname \
 ```
 
 Where the `start` and `end` parameters correspond to the start and end times for the
-performance period, and `output` specifies the CSV file to write the summary.
+performance period, and `output` specifies the CSV file to write the summary.  If
+`output` is not specified, the CSV will be printed.
 
 #### Example Summary CSV Output
 ```
@@ -71,17 +70,17 @@ account,start,end,1,2,bytes_used
 _TOTAL_BYTES,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,651599361473,2668692414899628,2669344014261102
 _TOTAL_GBYTES,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,651.599361473,2668692.414899628,2669344.014261102
 _TOTAL_TBYTES,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0.651599361473,2668.692414899628,2669.344014261102
-AUTH_bkruse,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,511194433,0,511194433
-AUTH_brandon,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,34034611,118111600639,118145635250
+AUTH_user1,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,511194433,0,511194433
+AUTH_user2,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,34034611,118111600639,118145635250
 AUTH_gateway,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,9039,9039
-AUTH_huda,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,39,2668456279649119,2668456279649158
-AUTH_kmullican,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,43,43
-AUTH_pmcnully,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,5106982,5106982
-AUTH_standingmandan,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
-AUTH_standingmandan2,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,622550930719,13130170907,635681101626
+AUTH_user100,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,39,2668456279649119,2668456279649158
+AUTH_user101,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,43,43
+AUTH_user102,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,5106982,5106982
+AUTH_user103,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
+AUTH_user1032,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,622550930719,13130170907,635681101626
 AUTH_swiftstack,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,45,45
-brandon,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
-standingmandan,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
+user2,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
+user103,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
 ```
 
 ### Raw Utilizataion Output
@@ -92,34 +91,34 @@ information.
 ```
 account,policy,object_count,container_count,end,bytes_used,start,pct_complete
 ...
-AUTH_huda,1,1,1,2017-06-30 05:00:00Z,39,2017-06-30 04:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 06:00:00Z,39,2017-06-30 05:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 07:00:00Z,39,2017-06-30 06:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 08:00:00Z,39,2017-06-30 07:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 09:00:00Z,39,2017-06-30 08:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 10:00:00Z,39,2017-06-30 09:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 11:00:00Z,39,2017-06-30 10:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 12:00:00Z,39,2017-06-30 11:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 13:00:00Z,39,2017-06-30 12:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 14:00:00Z,39,2017-06-30 13:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 15:00:00Z,39,2017-06-30 14:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 16:00:00Z,39,2017-06-30 15:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 17:00:00Z,39,2017-06-30 16:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 18:00:00Z,39,2017-06-30 17:00:00Z,100.0
-AUTH_huda,1,1,1,2017-06-30 19:00:00Z,39,2017-06-30 18:00:00Z,100.0
-AUTH_huda,2,2452108,3063,2017-05-31 20:00:00Z,2589049571070371,2017-05-31 19:00:00Z,100.0
-AUTH_huda,2,2452213,3063,2017-05-31 21:00:00Z,2589228656237796,2017-05-31 20:00:00Z,100.0
-AUTH_huda,2,2452309,3063,2017-05-31 22:00:00Z,2589396351126028,2017-05-31 21:00:00Z,100.0
-AUTH_huda,2,2452409,3063,2017-05-31 23:00:00Z,2589558274118405,2017-05-31 22:00:00Z,100.0
-AUTH_huda,2,2452508,3063,2017-06-01 00:00:00Z,2589734387328758,2017-05-31 23:00:00Z,100.0
-AUTH_huda,2,2452620,3063,2017-06-01 01:00:00Z,2589937171316426,2017-06-01 00:00:00Z,100.0
-AUTH_huda,2,2452720,3063,2017-06-01 02:00:00Z,2590098126915504,2017-06-01 01:00:00Z,100.0
-AUTH_huda,2,2452807,3063,2017-06-01 03:00:00Z,2590243625698271,2017-06-01 02:00:00Z,100.0
-AUTH_huda,2,2452909,3063,2017-06-01 04:00:00Z,2590422122047663,2017-06-01 03:00:00Z,100.0
-AUTH_huda,2,2453023,3063,2017-06-01 05:00:00Z,2590595392532682,2017-06-01 04:00:00Z,100.0
-AUTH_huda,2,2453112,3063,2017-06-01 06:00:00Z,2590745861976116,2017-06-01 05:00:00Z,100.0
-AUTH_huda,2,2453215,3063,2017-06-01 07:00:00Z,2590925040198939,2017-06-01 06:00:00Z,100.0
-AUTH_huda,2,2453326,3063,2017-06-01 08:00:00Z,2591101721504170,2017-06-01 07:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 05:00:00Z,39,2017-06-30 04:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 06:00:00Z,39,2017-06-30 05:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 07:00:00Z,39,2017-06-30 06:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 08:00:00Z,39,2017-06-30 07:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 09:00:00Z,39,2017-06-30 08:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 10:00:00Z,39,2017-06-30 09:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 11:00:00Z,39,2017-06-30 10:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 12:00:00Z,39,2017-06-30 11:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 13:00:00Z,39,2017-06-30 12:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 14:00:00Z,39,2017-06-30 13:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 15:00:00Z,39,2017-06-30 14:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 16:00:00Z,39,2017-06-30 15:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 17:00:00Z,39,2017-06-30 16:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 18:00:00Z,39,2017-06-30 17:00:00Z,100.0
+AUTH_user100,1,1,1,2017-06-30 19:00:00Z,39,2017-06-30 18:00:00Z,100.0
+AUTH_user100,2,2452108,3063,2017-05-31 20:00:00Z,2589049571070371,2017-05-31 19:00:00Z,100.0
+AUTH_user100,2,2452213,3063,2017-05-31 21:00:00Z,2589228656237796,2017-05-31 20:00:00Z,100.0
+AUTH_user100,2,2452309,3063,2017-05-31 22:00:00Z,2589396351126028,2017-05-31 21:00:00Z,100.0
+AUTH_user100,2,2452409,3063,2017-05-31 23:00:00Z,2589558274118405,2017-05-31 22:00:00Z,100.0
+AUTH_user100,2,2452508,3063,2017-06-01 00:00:00Z,2589734387328758,2017-05-31 23:00:00Z,100.0
+AUTH_user100,2,2452620,3063,2017-06-01 01:00:00Z,2589937171316426,2017-06-01 00:00:00Z,100.0
+AUTH_user100,2,2452720,3063,2017-06-01 02:00:00Z,2590098126915504,2017-06-01 01:00:00Z,100.0
+AUTH_user100,2,2452807,3063,2017-06-01 03:00:00Z,2590243625698271,2017-06-01 02:00:00Z,100.0
+AUTH_user100,2,2452909,3063,2017-06-01 04:00:00Z,2590422122047663,2017-06-01 03:00:00Z,100.0
+AUTH_user100,2,2453023,3063,2017-06-01 05:00:00Z,2590595392532682,2017-06-01 04:00:00Z,100.0
+AUTH_user100,2,2453112,3063,2017-06-01 06:00:00Z,2590745861976116,2017-06-01 05:00:00Z,100.0
+AUTH_user100,2,2453215,3063,2017-06-01 07:00:00Z,2590925040198939,2017-06-01 06:00:00Z,100.0
+AUTH_user100,2,2453326,3063,2017-06-01 08:00:00Z,2591101721504170,2017-06-01 07:00:00Z,100.0
 ...
 ```
 ### Using Environment Variables
@@ -139,11 +138,13 @@ providing a quasi-config file.
 ```
 usage: ss-util [-h] [-m CONTROLLER_HOST] [-c CLUSTER_ID] [-u SSAPI_USER]
                [-k SSAPI_KEY] -s START_DATETIME -e END_DATETIME -p
-               STORAGE_POLICY [STORAGE_POLICY ...] -o OUTPUT_FILE [--raw] [-V]
-               [-v]
+               STORAGE_POLICY [STORAGE_POLICY ...] [-o OUTPUT_FILE] [--raw]
+               [-V] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
+  -o OUTPUT_FILE, --output OUTPUT_FILE
+                        file to output utilization data
   --raw                 output raw hourly utilization hours; don't summarize
   -V, --version         print version and exit
   -v, --verbose         verbose log messages
@@ -152,7 +153,7 @@ required arguments:
   -m CONTROLLER_HOST, --controller CONTROLLER_HOST
                         Hostname of controller (or env[SSAPI_CONTROLLER])
   -c CLUSTER_ID, --cluster CLUSTER_ID
-                        ID of cluster on controller (or env[SSAPI_CLUSTER)
+                        ID of cluster on controller (or env[SSAPI_CLUSTER])
   -u SSAPI_USER, --user SSAPI_USER
                         SwiftStack API User (or env[SSAPI_USER])
   -k SSAPI_KEY, --key SSAPI_KEY
@@ -168,8 +169,6 @@ required arguments:
   -p STORAGE_POLICY [STORAGE_POLICY ...], --policy STORAGE_POLICY [STORAGE_POLICY ...]
                         Storage policies in cluster (can specify multiple,
                         e.g. '-p 1 2')
-  -o OUTPUT_FILE, --output OUTPUT_FILE
-                        file to output utilization data
 ```
 
 # Known Limitations
