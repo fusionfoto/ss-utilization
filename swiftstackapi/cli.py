@@ -124,6 +124,9 @@ def parse_args(args):
     parser.add_argument("-o", "--output", help="file to output utilization data; "
                                                "if not specified, output will be printed",
                         type=str, dest="output_file", default=None)
+    parser.add_argument("-f", "--format", help="output format columns to include",
+                        nargs="+", choices=['a', 's', 'e', 'p', 'c', 'o', 'b'],
+                        dest="output_format")
     parser.add_argument('--raw', help="output raw hourly utilization hours; don't summarize",
                         action='store_true',
                         dest="raw_output")
