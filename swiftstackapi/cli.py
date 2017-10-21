@@ -8,6 +8,16 @@ import StringIO
 
 from swiftstackapi import api, output, version
 
+OUTPUT_FIELD_MAP = {
+    'a': 'account',
+    's': 'start',
+    'e': 'end',
+    'p': 'policy',
+    'c': 'container_count',
+    'o': 'object_count',
+    'b': 'bytes_used'
+}
+
 
 def timestamp(stamp):
     """
@@ -125,8 +135,8 @@ def parse_args(args):
                                                "if not specified, output will be printed",
                         type=str, dest="output_file", default=None)
     parser.add_argument("-f", "--format", help="output format columns to include",
-                        nargs="+", choices=['a', 's', 'e', 'p', 'c', 'o', 'b'],
-                        dest="output_format")
+                        nargs="+", choices=OUTPUT_FIELD_MAP.keys(),
+                        dest="output_fields")
     parser.add_argument('--raw', help="output raw hourly utilization hours; don't summarize",
                         action='store_true',
                         dest="raw_output")
@@ -154,6 +164,13 @@ def setup_logging(name=None, level=logging.INFO):
     return logger
 
 
+def map_fields(output_fields):
+    mapped = []
+    for field_key in output_fields:
+        mapped.append(OUTPUT_FIELD_MAP[field_key])
+    return mapped
+
+
 def main(args=None):
     if not args:
         args = sys.argv[1:]
@@ -173,6 +190,10 @@ def main(args=None):
     logger.debug("Got configuration:")
     for item in config.__dict__:
         logger.debug("%s: %s " % (item, config.__dict__[item]))
+
+    capture_fields = None
+    if config.output_fields:
+        capture_fields = map_fields(config.output_fields)
 
     try:
         ssapiclient = api.SwiftStackAPIClient(controller=config.controller_host,
@@ -202,7 +223,7 @@ def main(args=None):
 
         if config.output_file:
             with open(config.output_file, 'wb') as f:
-                writer = output.CsvUtilizationWriter(util_output, f)
+                writer = output.CsvUtilizationWriter(util_output, f, data_fields=capture_fields)
                 if config.raw_output:
                     writer.write_raw_csv()
                 else:
@@ -210,14 +231,13 @@ def main(args=None):
                 logger.info("Wrote %s" % config.output_file)
         else:
             fake_csvfile = StringIO.StringIO()
-            writer = output.CsvUtilizationWriter(util_output, fake_csvfile)
+            writer = output.CsvUtilizationWriter(util_output, fake_csvfile, data_fields=capture_fields)
             if config.raw_output:
                 writer.write_raw_csv()
             else:
                 writer.write_summary_csv()
             print fake_csvfile.getvalue()
             fake_csvfile.close()
-
 
     except:
         raise
