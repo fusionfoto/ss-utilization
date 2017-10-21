@@ -121,6 +121,46 @@ AUTH_user100,2,2453215,3063,2017-06-01 07:00:00Z,2590925040198939,2017-06-01 06:
 AUTH_user100,2,2453326,3063,2017-06-01 08:00:00Z,2591101721504170,2017-06-01 07:00:00Z,100.0
 ...
 ```
+
+### Filtering Utilization Output
+Raw and summary utilization output columns can also be optionally controlled with the
+`-f`, `--fields` parameter.  Specify columns using space-separated single letters which map
+to the following:
+
+```
+    'a': 'account',
+    's': 'start',
+    'e': 'end',
+    'p': 'policy',
+    'c': 'container_count',
+    'o': 'object_count',
+    'b': 'bytes_used'
+```
+
+
+For example:
+
+`ss-util ... --fields a b`
+
+will produce the output:
+
+```
+account,bytes_used
+_TOTAL_BYTES,2669344014261102
+_TOTAL_GBYTES,2669344.014261102
+_TOTAL_TBYTES,2669.344014261102
+AUTH_user1,0,511194433
+AUTH_user2,118111600639,118145635250
+AUTH_gateway,9039
+AUTH_user100,2668456279649158
+AUTH_user101,43
+AUTH_user102,5106982
+AUTH_user103,0
+AUTH_user1032,635681101626
+AUTH_swiftstack,45
+```
+
+
 ### Using Environment Variables
 
 `ss-utilization` supports setting some parameters via environment variables instead of using the
@@ -138,14 +178,19 @@ providing a quasi-config file.
 ```
 usage: ss-util [-h] [-m CONTROLLER_HOST] [-c CLUSTER_ID] [-u SSAPI_USER]
                [-k SSAPI_KEY] -s START_DATETIME -e END_DATETIME -p
-               STORAGE_POLICY [STORAGE_POLICY ...] [-o OUTPUT_FILE] [--raw]
-               [-V] [-v] [-q]
+               STORAGE_POLICY [STORAGE_POLICY ...] [-o OUTPUT_FILE]
+               [-f {a,c,b,e,o,p,s} [{a,c,b,e,o,p,s} ...]] [--raw] [-V] [-v]
+               [-q]
 
 optional arguments:
   -h, --help            show this help message and exit
   -o OUTPUT_FILE, --output OUTPUT_FILE
                         file to output utilization data; if not specified,
                         output will be printed
+  -f {a,c,b,e,o,p,s} [{a,c,b,e,o,p,s} ...], --fields {a,c,b,e,o,p,s} [{a,c,b,e,o,p,s} ...]
+                        output format columns to include: a: account, c:
+                        container_count, b: bytes_used, e: end, o:
+                        object_count, p: policy, s: start,
   --raw                 output raw hourly utilization hours; don't summarize
   -V, --version         print version and exit
   -v, --verbose         verbose log messages
@@ -171,6 +216,7 @@ required arguments:
   -p STORAGE_POLICY [STORAGE_POLICY ...], --policy STORAGE_POLICY [STORAGE_POLICY ...]
                         Storage policies in cluster (can specify multiple,
                         e.g. '-p 1 2')
+
 ```
 
 # Known Limitations
