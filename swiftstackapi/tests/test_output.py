@@ -124,6 +124,25 @@ class TestCsvUtilizationWriter(TestCase):
             """account1,2013-09-01 01:30:00Z,2013-09-01 02:30:00Z,5000,50000,1500000000000,100.0,2\r\n""" \
             """account1,2013-09-01 02:30:00Z,2013-09-01 03:30:00Z,5000,50000,2000000000000,100.0,2\r\n"""
 
+        self.expected_csv_filtered = \
+            """account,end,bytes_used\r\n""" \
+            """account2,2013-09-01 00:30:00Z,500000\r\n""" \
+            """account2,2013-09-01 01:30:00Z,500000\r\n""" \
+            """account2,2013-09-01 02:30:00Z,500000\r\n""" \
+            """account2,2013-09-01 03:30:00Z,500000\r\n""" \
+            """account2,2013-09-01 00:30:00Z,500000\r\n""" \
+            """account2,2013-09-01 01:30:00Z,500000\r\n""" \
+            """account2,2013-09-01 02:30:00Z,500000\r\n""" \
+            """account2,2013-09-01 03:30:00Z,500000\r\n""" \
+            """account1,2013-09-01 00:30:00Z,500000000000\r\n""" \
+            """account1,2013-09-01 01:30:00Z,1000000000000\r\n""" \
+            """account1,2013-09-01 02:30:00Z,1500000000000\r\n""" \
+            """account1,2013-09-01 03:30:00Z,2000000000000\r\n""" \
+            """account1,2013-09-01 00:30:00Z,500000000000\r\n""" \
+            """account1,2013-09-01 01:30:00Z,1000000000000\r\n""" \
+            """account1,2013-09-01 02:30:00Z,1500000000000\r\n""" \
+            """account1,2013-09-01 03:30:00Z,2000000000000\r\n"""
+
         self.expected_summary = {'_TOTAL_BYTES': {'bytes_used': 2500001000000,
                                                   'end': '2013-09-01 03:30:00Z',
                                                   'start': '2013-08-31 23:30:00Z',
@@ -158,6 +177,14 @@ class TestCsvUtilizationWriter(TestCase):
             """account1,2013-08-31 23:30:00Z,2013-09-01 03:30:00Z,1250000000000,1250000000000,2500000000000\r\n""" \
             """account2,2013-08-31 23:30:00Z,2013-09-01 03:30:00Z,500000,500000,1000000\r\n"""
 
+        self.expected_summary_csv_filtered = \
+            """account,bytes_used\r\n""" \
+            """_TOTAL_BYTES,2500001000000\r\n""" \
+            """_TOTAL_GBYTES,2500.001\r\n""" \
+            """_TOTAL_TBYTES,2.500001\r\n""" \
+            """account1,2500000000000\r\n""" \
+            """account2,1000000\r\n"""
+
     def test_get_fields(self):
         writer = output.CsvUtilizationWriter(self.test_data, "fakey", "fake_fields")
         fields = writer.get_fields(self.test_data)
@@ -181,6 +208,18 @@ class TestCsvUtilizationWriter(TestCase):
 
         self.assertMultiLineEqual(fake_csvfile.getvalue(), self.expected_csv)
 
+    def test_write_raw_csv_filtered(self):
+        fake_csvfile = StringIO.StringIO()
+
+        # filter fields
+        fields = ['account', 'end', 'bytes_used']
+
+        writer = output.CsvUtilizationWriter(self.test_data, fake_csvfile,
+                                             output_fields=fields)
+        writer.write_raw_csv()
+
+        self.assertMultiLineEqual(fake_csvfile.getvalue(), self.expected_csv_filtered)
+
     def test_summarize(self):
         writer = output.CsvUtilizationWriter(self.test_data, "fakey")
 
@@ -195,3 +234,12 @@ class TestCsvUtilizationWriter(TestCase):
         writer.write_summary_csv()
 
         self.assertMultiLineEqual(fake_csvfile.getvalue(), self.expected_summary_csv)
+
+    def test_write_summary_csv_filtered(self):
+        fake_csvfile = StringIO.StringIO()
+
+        writer = output.CsvUtilizationWriter(self.test_data, fake_csvfile,
+                                             output_fields=['account', 'bytes_used'])
+        writer.write_summary_csv()
+
+        self.assertMultiLineEqual(fake_csvfile.getvalue(), self.expected_summary_csv_filtered)

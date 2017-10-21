@@ -8,6 +8,7 @@ import StringIO
 
 from swiftstackapi import api, output, version
 
+
 OUTPUT_FIELD_MAP = {
     'a': 'account',
     's': 'start',
@@ -17,6 +18,10 @@ OUTPUT_FIELD_MAP = {
     'o': 'object_count',
     'b': 'bytes_used'
 }
+
+OUTPUT_FIELD_HELPTXT = "output format columns to include: \n" + "".join(
+    ['{0}: {1},\n'.format(k, v) for k,v in OUTPUT_FIELD_MAP.iteritems()]
+)
 
 
 def timestamp(stamp):
@@ -134,7 +139,7 @@ def parse_args(args):
     parser.add_argument("-o", "--output", help="file to output utilization data; "
                                                "if not specified, output will be printed",
                         type=str, dest="output_file", default=None)
-    parser.add_argument("-f", "--format", help="output format columns to include",
+    parser.add_argument("-f", "--fields", help=OUTPUT_FIELD_HELPTXT,
                         nargs="+", choices=OUTPUT_FIELD_MAP.keys(),
                         dest="output_fields")
     parser.add_argument('--raw', help="output raw hourly utilization hours; don't summarize",
@@ -223,7 +228,7 @@ def main(args=None):
 
         if config.output_file:
             with open(config.output_file, 'wb') as f:
-                writer = output.CsvUtilizationWriter(util_output, f, data_fields=capture_fields)
+                writer = output.CsvUtilizationWriter(util_output, f, output_fields=capture_fields)
                 if config.raw_output:
                     writer.write_raw_csv()
                 else:
@@ -231,7 +236,8 @@ def main(args=None):
                 logger.info("Wrote %s" % config.output_file)
         else:
             fake_csvfile = StringIO.StringIO()
-            writer = output.CsvUtilizationWriter(util_output, fake_csvfile, data_fields=capture_fields)
+            writer = output.CsvUtilizationWriter(util_output, fake_csvfile,
+                                                 output_fields=capture_fields)
             if config.raw_output:
                 writer.write_raw_csv()
             else:
