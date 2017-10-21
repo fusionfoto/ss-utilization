@@ -16,8 +16,10 @@ controllers via the SwiftStack API
 3. After pulling the image, you can run the `ss-util` script as described below by prefixing the command with the `docker run` command, as follows:
 
 ```
-$ docker run -v `pwd`:/output swiftstack/ssapi ss-util ...
+$ docker run swiftstack/ssapi ss-util ...
 ```
+
+The docker image exports a volume called `/output` which can be mapped using the `-v` parameter (e.g. `-v `pwd`:/output`.  This is necessary if writing out files with the utility.
 
 ### Install in a Virtualenv
 
