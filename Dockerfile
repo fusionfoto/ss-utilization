@@ -10,5 +10,5 @@ RUN mkdir /output
 VOLUME /output
 
 #build/install code
-COPY . .
+COPY * ./
 RUN python setup.py install
