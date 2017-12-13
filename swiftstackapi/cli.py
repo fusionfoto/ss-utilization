@@ -183,7 +183,10 @@ def main(args=None):
     config = parse_args(args)
 
     if config.verbose:
-        if config.verbose < 2:
+        if config.verbose > 1:
+            # no lower logging level, but lets handle it anyway and just set it to DEBUG
+            logger = setup_logging(os.path.basename(sys.argv[0]), logging.DEBUG)
+        else:
             logger = setup_logging(os.path.basename(sys.argv[0]), logging.DEBUG)
     else:
         logger = setup_logging(os.path.basename(sys.argv[0]), logging.INFO)
