@@ -29,6 +29,17 @@ class TestSwiftStackAPIClient(TestCase):
                                                      params={'zero': 0, 'one': 1, 'limit': RESP_LIMIT})
         self.assertEqual(rval, get_response)
 
+    def test_request_with_quotable_chars(self):
+        get_response = {'thing': ['one', 'two'], 'otherthing': 'value'}
+        self.mock_response_obj.json.return_value = get_response
+
+        rval = self.client.request(method='GeT', path=';?:/@&= +/$,', params={'zero': 0, 'one': 1})
+
+        self.mock_session_obj.get.assert_called_with(
+            'https://controller/api/v1/%3B%3F%3A/%40%26%3D%20%2B/%24%2C',
+            params={'zero': 0, 'one': 1, 'limit': RESP_LIMIT})
+        self.assertEqual(rval, get_response)
+
     def test_get(self):
         get_response = {'meta': ['one', 'two'], 'objects': [{'name': 'itemA',
                                                              'param': 'value',

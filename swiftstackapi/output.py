@@ -70,14 +70,22 @@ class CsvUtilizationWriter(object):
             accountsum = float(0)
             acctpolicysums = {}
             for policy in self.data[account]:
-                policysum = float(0)
-                numhours = len(self.data[account][policy])
-                starttime = self.data[account][policy][:1][0]['start']
-                endtime = self.data[account][policy][-1:][0]['end']
-                for record in self.data[account][policy]:
-                    policysum += float(record['bytes_used']) / numhours
-                accountsum += policysum
-                acctpolicysums[policy] = policysum
+                try:
+                    policysum = float(0)
+                    numhours = len(self.data[account][policy])
+                    starttime = self.data[account][policy][:1][0]['start']
+                    endtime = self.data[account][policy][-1:][0]['end']
+                    for record in self.data[account][policy]:
+                        policysum += float(record['bytes_used']) / numhours
+                    accountsum += policysum
+                    acctpolicysums[policy] = policysum
+                except KeyError as e:
+                    logger.exception("Error accessing expected data key %s in "
+                                     "account %s policy %s" % (
+                                         e.args,
+                                         account,
+                                         policy
+                                     ))
             self.summary[account] = {'start': starttime,
                                      'end': endtime,
                                      'bytes_used': int(accountsum)}
@@ -89,7 +97,8 @@ class CsvUtilizationWriter(object):
                     all_policysums[pidx] = int(acctpolicysums[pidx])
 
         all_sum = sum(self.summary[account]['bytes_used'] for account in self.summary)
-        logger.debug('summarized %d accounts and %d policies' % (len(self.summary), len(all_policysums)))
+        logger.debug('summarized %d accounts and %d policies' % (len(self.summary),
+                                                                 len(all_policysums)))
         self.summary[u'_TOTAL_BYTES'] = {'start': starttime,
                                          'end': endtime,
                                          'bytes_used': all_sum}

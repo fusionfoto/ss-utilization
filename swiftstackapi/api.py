@@ -7,19 +7,20 @@ DTF_ISO8601 = "%Y-%m-%dT%H:%M:%S"
 
 logger = logging.getLogger(__name__)
 
+
 class SwiftStackAPIClient(object):
     def __init__(self, controller, apiuser, apikey):
         self.endpoint = "https://" + controller + "/api/v1/"
         self.apiuser = apiuser
         self.apikey = apikey
         self.session = requests.Session()
-        headers = {'Authorization':
-                       'apikey %s:%s' % (self.apiuser, self.apikey)}
+        headers = {'Authorization': 'apikey %s:%s' % (self.apiuser, self.apikey)}
 
         self.session.headers.update(headers)
         logger.debug("Initialized SwiftStackAPIClient")
 
     def request(self, method, path="", params={}):
+        quoted_path = requests.utils.quote(path)
         verb_map = {
             'GET': self.session.get,
             'PUT': self.session.put,
@@ -27,8 +28,8 @@ class SwiftStackAPIClient(object):
             'POST': self.session.post
         }
         params['limit'] = RESP_LIMIT
-        logger.debug("request %s %s, (%s)" % (method, path, params))
-        r = verb_map[method.upper()](self.endpoint + path, params=params)
+        logger.debug("request %s %s, (%s)" % (method, quoted_path, params))
+        r = verb_map[method.upper()](self.endpoint + quoted_path, params=params)
         return r.json()
 
     def get(self, path="", params=None):
@@ -70,5 +71,3 @@ class SwiftStackAPIClient(object):
         records = [item for item in acct_hourly_util['objects']]
         logger.debug("get_acct_util: (%d) records" % len(records))
         return records
-
-
