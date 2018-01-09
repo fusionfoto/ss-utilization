@@ -145,6 +145,9 @@ def parse_args(args):
     parser.add_argument('--raw', help="output raw hourly utilization hours; don't summarize",
                         action='store_true',
                         dest="raw_output")
+    parser.add_argument('--accountonly', help="output account only, not utilization hours; not summarize",
+                        action='store_true',
+                        dest="account_output")
     parser.add_argument('-V', '--version', help='print version and exit',
                         action='version',
                         version='%(prog)s ' + version.version)
@@ -216,35 +219,47 @@ def main(args=None):
                                                   policy=p)
             logger.info("Got %d accounts in utilization period for policy %s" %
                         (len(util_accts), p))
-            for account in util_accts:
-                if account not in util_output:
-                    util_output[account] = {}
-                records = ssapiclient.get_acct_util(cluster=config.cluster_id,
-                                                    account=account,
-                                                    start_time=config.start_datetime,
-                                                    end_time=config.end_datetime,
-                                                    policy=p)
-                util_output[account][p] = records
-                logger.info("Got %d records for account %s in policy %s" % (len(records),
-                                                                            account,
-                                                                            p))
+            if config.account_output is False:
+                for account in util_accts:
+                    if account not in util_output:
+                        util_output[account] = {}
+                    records = ssapiclient.get_acct_util(cluster=config.cluster_id,
+                                                        account=account,
+                                                        start_time=config.start_datetime,
+                                                        end_time=config.end_datetime,
+                                                        policy=p)
+                    util_output[account][p] = records
+                    logger.info("Got %d records for account %s in policy %s" % (len(records),
+                                                                                account,
+                                                                                p))
 
         if config.output_file:
             with open(config.output_file, 'wb') as f:
-                writer = output.CsvUtilizationWriter(util_output, f, output_fields=capture_fields)
+                if config.account_output:
+                    capture_fields = ['account']
+                    writer = output.CsvUtilizationWriter(util_accts, f, output_fields=capture_fields)
+                    writer.write_accountonly_csv()
+                else:
+                    writer = output.CsvUtilizationWriter(util_output, f, output_fields=capture_fields)
+                    if config.raw_output:
+                        writer.write_raw_csv()
+                    else:
+                        writer.write_summary_csv()
+                logger.info("Wrote %s" % config.output_file)
+        else:
+            fake_csvfile = StringIO.StringIO()
+            if config.account_output:
+                capture_fields = ['account']
+                writer = output.CsvUtilizationWriter(util_accts, fake_csvfile,
+                                                     output_fields=capture_fields)
+                writer.write_accountonly_csv()
+            else:
+                writer = output.CsvUtilizationWriter(util_output, fake_csvfile,
+                                                     output_fields=capture_fields)
                 if config.raw_output:
                     writer.write_raw_csv()
                 else:
                     writer.write_summary_csv()
-                logger.info("Wrote %s" % config.output_file)
-        else:
-            fake_csvfile = StringIO.StringIO()
-            writer = output.CsvUtilizationWriter(util_output, fake_csvfile,
-                                                 output_fields=capture_fields)
-            if config.raw_output:
-                writer.write_raw_csv()
-            else:
-                writer.write_summary_csv()
             print fake_csvfile.getvalue()
             fake_csvfile.close()
 
