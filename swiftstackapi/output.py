@@ -14,6 +14,23 @@ class CsvUtilizationWriter(object):
         self.policy_fields = None
         self.output_fields = output_fields
 
+    def write_accountonly_csv(self):
+        # use fields in self.output_fields if it exists for output column control
+        if not self.output_fields:
+            fields = self.get_fields(self.data)
+        else:
+            fields = self.output_fields
+        writer = csv.DictWriter(self.output_file, fields)
+        writer.writeheader()
+        rows = 0
+        for account in self.data:
+            if account[:8] == "account:":
+                writer.writerow({'account': account[9:len(account)]})
+            else:
+                writer.writerow({'account': account})
+            rows += 1
+        logger.debug('wrote %d rows to %s' % (rows, self.output_file))
+
     def write_raw_csv(self):
         # use fields in self.output_fields if it exists for output column control
         if not self.output_fields:

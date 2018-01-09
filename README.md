@@ -84,6 +84,8 @@ AUTH_swiftstack,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,45,45
 user2,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
 user103,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
 ```
+### Account Only Output
+If required the `--accountonly` parameter can be used to get account only information.
 
 ### Raw Utilizataion Output
 If required the `--raw` parameter can be used to get raw account-policy-hourly utilization
@@ -193,6 +195,7 @@ optional arguments:
                         output format columns to include: a: account, c:
                         container_count, b: bytes_used, e: end, o:
                         object_count, p: policy, s: start,
+  --accountonly         output account only information
   --raw                 output raw hourly utilization hours; don't summarize
   -V, --version         print version and exit
   -v, --verbose         verbose log messages

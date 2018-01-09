@@ -124,6 +124,11 @@ class TestCsvUtilizationWriter(TestCase):
             """account1,2013-09-01 01:30:00Z,2013-09-01 02:30:00Z,5000,50000,1500000000000,100.0,2\r\n""" \
             """account1,2013-09-01 02:30:00Z,2013-09-01 03:30:00Z,5000,50000,2000000000000,100.0,2\r\n"""
 
+        self.expected_accountonly_csv = \
+            """account\r\n""" \
+            """account2\r\n""" \
+            """account1\r\n"""
+
         self.expected_csv_filtered = \
             """account,end,bytes_used\r\n""" \
             """account2,2013-09-01 00:30:00Z,500000\r\n""" \
@@ -194,6 +199,15 @@ class TestCsvUtilizationWriter(TestCase):
                            'bytes_used', 'pct_complete', 'policy']
 
         self.assertItemsEqual(fields, expected_fields)
+
+    def test_write_accountonly_csv(self):
+        fake_csvfile = StringIO.StringIO()
+
+        fields = ['account']
+
+        writer = output.CsvUtilizationWriter(self.test_data, fake_csvfile, fields)
+        writer.write_accountonly_csv()
+        self.assertMultiLineEqual(fake_csvfile.getvalue(), self.expected_accountonly_csv)
 
     def test_write_raw_csv(self):
         fake_csvfile = StringIO.StringIO()
