@@ -224,7 +224,7 @@ required arguments:
 
 ```
 
-# Known Limitations
+## Known Limitations
 
 Currently, it is required to know what timezone the cluster is in (or how the performance
 period is defined) and use that in the timestamp offsets in the start and end parameters. The
