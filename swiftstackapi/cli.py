@@ -163,6 +163,8 @@ def parse_args(args):
     parser.add_argument('--accountonly', help="output account only, not utilization hours; not summarize",
                         action='store_true',
                         dest="account_output")
+    parser.add_argument('--cert', help="path to controller SSL cert (e.g. if self-signed)",
+                        type=str, dest="controller_cert_path", default=None)
     parser.add_argument('-V', '--version', help='print version and exit',
                         action='version',
                         version='%(prog)s ' + version.version)
@@ -224,7 +226,8 @@ def main(args=None):
     try:
         ssapiclient = api.SwiftStackAPIClient(controller=config.controller_host,
                                               apiuser=config.ssapi_user,
-                                              apikey=config.ssapi_key)
+                                              apikey=config.ssapi_key,
+                                              controller_cert=config.controller_cert_path)
         # TODO: all this logic needs to be in some unit-testable function!!
         util_output = {}
         for p in config.storage_policy:
@@ -234,49 +237,56 @@ def main(args=None):
                                                   policy=p)
             logger.info("Got %d accounts in utilization period for policy %s" %
                         (len(util_accts), p))
-            if config.account_output is False:
-                for account in util_accts:
-                    if account not in util_output:
-                        util_output[account] = {}
-                    records = ssapiclient.get_acct_util(cluster=config.cluster_id,
-                                                        account=account,
-                                                        start_time=config.start_datetime,
-                                                        end_time=config.end_datetime,
-                                                        policy=p)
-                    util_output[account][p] = records
-                    logger.info("Got %d records for account %s in policy %s" % (len(records),
-                                                                                account,
-                                                                                p))
 
-        if config.output_file:
-            with open(config.output_file, 'wb') as f:
+            if len(util_accts) > 0:
+                if config.account_output is False:
+                    for account in util_accts:
+                        if account not in util_output:
+                            util_output[account] = {}
+                        records = ssapiclient.get_acct_util(cluster=config.cluster_id,
+                                                            account=account,
+                                                            start_time=config.start_datetime,
+                                                            end_time=config.end_datetime,
+                                                            policy=p)
+                        util_output[account][p] = records
+                        logger.info("Got %d records for account %s in policy %s" % (len(records),
+                                                                                    account,
+                                                                                    p))
+            else:
+                logger.warn("No accounts found in utilization period for policy %s" % p)
+
+        if util_output:
+            if config.output_file:
+                with open(config.output_file, 'wb') as f:
+                    if config.account_output:
+                        capture_fields = ['account']
+                        writer = output.CsvUtilizationWriter(util_accts, f, output_fields=capture_fields)
+                        writer.write_accountonly_csv()
+                    else:
+                        writer = output.CsvUtilizationWriter(util_output, f, output_fields=capture_fields)
+                        if config.raw_output:
+                            writer.write_raw_csv()
+                        else:
+                            writer.write_summary_csv()
+                    logger.info("Wrote %s" % config.output_file)
+            else:
+                fake_csvfile = StringIO.StringIO()
                 if config.account_output:
                     capture_fields = ['account']
-                    writer = output.CsvUtilizationWriter(util_accts, f, output_fields=capture_fields)
+                    writer = output.CsvUtilizationWriter(util_accts, fake_csvfile,
+                                                         output_fields=capture_fields)
                     writer.write_accountonly_csv()
                 else:
-                    writer = output.CsvUtilizationWriter(util_output, f, output_fields=capture_fields)
+                    writer = output.CsvUtilizationWriter(util_output, fake_csvfile,
+                                                         output_fields=capture_fields)
                     if config.raw_output:
                         writer.write_raw_csv()
                     else:
                         writer.write_summary_csv()
-                logger.info("Wrote %s" % config.output_file)
+                print fake_csvfile.getvalue()
+                fake_csvfile.close()
         else:
-            fake_csvfile = StringIO.StringIO()
-            if config.account_output:
-                capture_fields = ['account']
-                writer = output.CsvUtilizationWriter(util_accts, fake_csvfile,
-                                                     output_fields=capture_fields)
-                writer.write_accountonly_csv()
-            else:
-                writer = output.CsvUtilizationWriter(util_output, fake_csvfile,
-                                                     output_fields=capture_fields)
-                if config.raw_output:
-                    writer.write_raw_csv()
-                else:
-                    writer.write_summary_csv()
-            print fake_csvfile.getvalue()
-            fake_csvfile.close()
+            logger.error("No utilization data found in specified time range!")
 
     except:
         raise

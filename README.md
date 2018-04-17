@@ -11,19 +11,25 @@ controllers via the SwiftStack API
 
 ### Docker
 
-1. Download and install Docker for your platform: [Docker Download Link](https://www.docker.com/community-edition#/download)
-2. Once Docker is installed, get the container image with the command `docker pull swiftstack/ssapi`
-3. After pulling the image, you can run the `ss-util` script as described below by prefixing the command with the `docker run` command, as follows:
+1. Download and install Docker for your platform:
+   [Docker Download Link](https://www.docker.com/community-edition#/download)
+2. Once Docker is installed, get the container image with the command `docker pull
+   swiftstack/ssapi`
+3. After pulling the image, you can run the `ss-util` script as described below by
+   prefixing the command with the `docker run` command, as follows:
 
 ```
 $ docker run swiftstack/ssapi ss-util ...
 ```
 
-The docker image exports a volume called `/output` which can be mapped using the `-v` parameter (e.g. `-v `pwd`:/output`.  This is necessary if writing out files with the utility.
+The docker image exports a volume called `/output` which can be mapped using the `-v`
+parameter (e.g. `-v `pwd`:/output`. This is necessary if writing out files with the
+utility.
 
 ### Install in a Virtualenv
 
-1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by running `virtualenv ss-util`
+1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by running `virtualenv
+   ss-util`
 2. `cd ss-util`
 3. `source ./bin/activate`
 4. Download the latest release from the
@@ -87,6 +93,25 @@ user103,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
 ### Account Only Output
 If required the `--accountonly` parameter can be used to get account only information.
 
+### SSL Certificate Validation
+By default, `ssapi` will assume the controller SSL certificate is signed by a known
+authority. However, if the controller certificate is self-signed (or signed by a private
+CA), the `--cert` option can be used to specify the certificate to trust locally. For
+example, you can download the self-signed certificate from the controller to your local
+directory and then then use it in the `ss-util` command, e.g.:
+
+```
+$ scp controller:/opt/ss/etc/ssman.crt ./
+$ ss-util --cert ./ssman.crt ...
+```
+
+Note if you are running the Dockerized version of this tool, you will need to map the
+local directory to a working dir, e.g.:
+
+```
+$ docker run -w /workdir -v $(pwd):/workdir swiftstack/ssapi ss-util --cert ./ssman.crt ...
+```
+
 ### Raw Utilizataion Output
 If required the `--raw` parameter can be used to get raw account-policy-hourly utilization
 information.
@@ -128,7 +153,7 @@ AUTH_user100,2,2453326,3063,2017-06-01 08:00:00Z,2591101721504170,2017-06-01 07:
 
 ### Filtering Utilization Output
 Raw and summary utilization output columns can also be optionally controlled with the
-`-f`, `--fields` parameter.  Specify columns using space-separated single letters which map
+`-f`, `--fields` parameter. Specify columns using space-separated single letters which map
 to the following:
 
 ```
@@ -167,8 +192,8 @@ AUTH_swiftstack,45
 
 ### Using Environment Variables
 
-`ss-utilization` supports setting some parameters via environment variables instead of using the
-command-line parameters. These are:
+`ss-utilization` supports setting some parameters via environment variables instead of
+using the command-line parameters. These are:
 
 - `SSAPI_CONTROLLER`: Hostname of controller (`-m` param)
 - `SSAPI_CLUSTER`: ID of cluster (`-c` param)
@@ -180,11 +205,11 @@ providing a quasi-config file.
 
 ### Command-line Parameter Reference
 ```
-usage: ss-util [-h] [-m CONTROLLER_HOST] [-c CLUSTER_ID] [-u SSAPI_USER]
-               [-k SSAPI_KEY] -s START_DATETIME -e END_DATETIME -p
-               STORAGE_POLICY [STORAGE_POLICY ...] [-o OUTPUT_FILE]
-               [-f {a,c,b,e,o,p,s} [{a,c,b,e,o,p,s} ...]] [--raw] [-V] [-v]
-               [-q]
+usage: ss-util [-h] -m CONTROLLER_HOST -c CLUSTER_ID -u SSAPI_USER -k
+               SSAPI_KEY -s START_DATETIME -e END_DATETIME -p STORAGE_POLICY
+               [STORAGE_POLICY ...] [-o OUTPUT_FILE]
+               [-f {a,c,b,e,o,p,s} [{a,c,b,e,o,p,s} ...]] [--raw]
+               [--accountonly] [--cert CONTROLLER_CERT_PATH] [-V] [-v] [-q]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -195,8 +220,11 @@ optional arguments:
                         output format columns to include: a: account, c:
                         container_count, b: bytes_used, e: end, o:
                         object_count, p: policy, s: start,
-  --accountonly         output account only information
   --raw                 output raw hourly utilization hours; don't summarize
+  --accountonly         output account only, not utilization hours; not
+                        summarize
+  --cert CONTROLLER_CERT_PATH
+                        path to controller SSL cert (e.g. if self-signed)
   -V, --version         print version and exit
   -v, --verbose         verbose log messages
   -q, --quiet           disable all logging (overrides verbose)
@@ -227,8 +255,8 @@ required arguments:
 ## Known Limitations
 
 Currently, it is required to know what timezone the cluster is in (or how the performance
-period is defined) and use that in the timestamp offsets in the start and end parameters. The
-SwiftStack API will return everything in UTC.
+period is defined) and use that in the timestamp offsets in the start and end parameters.
+The SwiftStack API will return everything in UTC.
 
 Also, there is currently no way in the SwiftStack API to query what policies are in use on
 a particular cluster, so this information must be known.
