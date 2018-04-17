@@ -93,6 +93,25 @@ user103,2017-05-31 19:00:00Z,2017-06-30 19:00:00Z,0,0,0
 ### Account Only Output
 If required the `--accountonly` parameter can be used to get account only information.
 
+### SSL Certificate Validation
+By default, `ssapi` will assume the controller SSL certificate is signed by a known
+authority. However, if the controller certificate is self-signed (or signed by a private
+CA), the `--cert` option can be used to specify the certificate to trust locally. For
+example, you can download the self-signed certificate from the controller to your local
+directory and then then use it in the `ss-util` command, e.g.:
+
+```
+$ scp controller:/opt/ss/etc/ssman.crt ./
+$ ss-util --cert ./ssman.crt ...
+```
+
+Note if you are running the Dockerized version of this tool, you will need to map the
+local directory to a working dir, e.g.:
+
+```
+$ docker run -w /workdir -v $(pwd):/workdir swiftstack/ssapi ss-util --cert ./ssman.crt ...
+```
+
 ### Raw Utilizataion Output
 If required the `--raw` parameter can be used to get raw account-policy-hourly utilization
 information.
