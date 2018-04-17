@@ -205,11 +205,11 @@ providing a quasi-config file.
 
 ### Command-line Parameter Reference
 ```
-usage: ss-util [-h] [-m CONTROLLER_HOST] [-c CLUSTER_ID] [-u SSAPI_USER]
-               [-k SSAPI_KEY] -s START_DATETIME -e END_DATETIME -p
-               STORAGE_POLICY [STORAGE_POLICY ...] [-o OUTPUT_FILE]
-               [-f {a,c,b,e,o,p,s} [{a,c,b,e,o,p,s} ...]] [--raw] [-V] [-v]
-               [-q]
+usage: ss-util [-h] -m CONTROLLER_HOST -c CLUSTER_ID -u SSAPI_USER -k
+               SSAPI_KEY -s START_DATETIME -e END_DATETIME -p STORAGE_POLICY
+               [STORAGE_POLICY ...] [-o OUTPUT_FILE]
+               [-f {a,c,b,e,o,p,s} [{a,c,b,e,o,p,s} ...]] [--raw]
+               [--accountonly] [--cert CONTROLLER_CERT_PATH] [-V] [-v] [-q]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -220,8 +220,11 @@ optional arguments:
                         output format columns to include: a: account, c:
                         container_count, b: bytes_used, e: end, o:
                         object_count, p: policy, s: start,
-  --accountonly         output account only information
   --raw                 output raw hourly utilization hours; don't summarize
+  --accountonly         output account only, not utilization hours; not
+                        summarize
+  --cert CONTROLLER_CERT_PATH
+                        path to controller SSL cert (e.g. if self-signed)
   -V, --version         print version and exit
   -v, --verbose         verbose log messages
   -q, --quiet           disable all logging (overrides verbose)
