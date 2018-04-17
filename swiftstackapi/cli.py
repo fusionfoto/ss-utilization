@@ -163,6 +163,8 @@ def parse_args(args):
     parser.add_argument('--accountonly', help="output account only, not utilization hours; not summarize",
                         action='store_true',
                         dest="account_output")
+    parser.add_argument('--cert', help="path to controller SSL cert (e.g. if self-signed)",
+                        type=str, dest="controller_cert_path", default=None)
     parser.add_argument('-V', '--version', help='print version and exit',
                         action='version',
                         version='%(prog)s ' + version.version)
@@ -224,7 +226,8 @@ def main(args=None):
     try:
         ssapiclient = api.SwiftStackAPIClient(controller=config.controller_host,
                                               apiuser=config.ssapi_user,
-                                              apikey=config.ssapi_key)
+                                              apikey=config.ssapi_key,
+                                              controller_cert=config.controller_cert_path)
         # TODO: all this logic needs to be in some unit-testable function!!
         util_output = {}
         for p in config.storage_policy:

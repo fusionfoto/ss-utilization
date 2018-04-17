@@ -24,11 +24,15 @@ logger = logging.getLogger(__name__)
 
 
 class SwiftStackAPIClient(object):
-    def __init__(self, controller, apiuser, apikey):
+    def __init__(self, controller, apiuser, apikey, controller_cert=None):
         self.endpoint = "https://" + controller + "/api/v1/"
         self.apiuser = apiuser
         self.apikey = apikey
         self.session = requests.Session()
+
+        if controller_cert:
+            self.session.verify = controller_cert
+
         headers = {'Authorization': 'apikey %s:%s' % (self.apiuser, self.apikey)}
 
         self.session.headers.update(headers)

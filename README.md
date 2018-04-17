@@ -11,19 +11,25 @@ controllers via the SwiftStack API
 
 ### Docker
 
-1. Download and install Docker for your platform: [Docker Download Link](https://www.docker.com/community-edition#/download)
-2. Once Docker is installed, get the container image with the command `docker pull swiftstack/ssapi`
-3. After pulling the image, you can run the `ss-util` script as described below by prefixing the command with the `docker run` command, as follows:
+1. Download and install Docker for your platform:
+   [Docker Download Link](https://www.docker.com/community-edition#/download)
+2. Once Docker is installed, get the container image with the command `docker pull
+   swiftstack/ssapi`
+3. After pulling the image, you can run the `ss-util` script as described below by
+   prefixing the command with the `docker run` command, as follows:
 
 ```
 $ docker run swiftstack/ssapi ss-util ...
 ```
 
-The docker image exports a volume called `/output` which can be mapped using the `-v` parameter (e.g. `-v `pwd`:/output`.  This is necessary if writing out files with the utility.
+The docker image exports a volume called `/output` which can be mapped using the `-v`
+parameter (e.g. `-v `pwd`:/output`. This is necessary if writing out files with the
+utility.
 
 ### Install in a Virtualenv
 
-1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by running `virtualenv ss-util`
+1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by r unning
+   `virtualenv ss-util`
 2. `cd ss-util`
 3. `source ./bin/activate`
 4. Download the latest release from the
@@ -128,7 +134,7 @@ AUTH_user100,2,2453326,3063,2017-06-01 08:00:00Z,2591101721504170,2017-06-01 07:
 
 ### Filtering Utilization Output
 Raw and summary utilization output columns can also be optionally controlled with the
-`-f`, `--fields` parameter.  Specify columns using space-separated single letters which map
+`-f`, `--fields` parameter. Specify columns using space-separated single letters which map
 to the following:
 
 ```
@@ -167,8 +173,8 @@ AUTH_swiftstack,45
 
 ### Using Environment Variables
 
-`ss-utilization` supports setting some parameters via environment variables instead of using the
-command-line parameters. These are:
+`ss-utilization` supports setting some parameters via environment variables instead of
+using the command-line parameters. These are:
 
 - `SSAPI_CONTROLLER`: Hostname of controller (`-m` param)
 - `SSAPI_CLUSTER`: ID of cluster (`-c` param)
@@ -227,8 +233,8 @@ required arguments:
 ## Known Limitations
 
 Currently, it is required to know what timezone the cluster is in (or how the performance
-period is defined) and use that in the timestamp offsets in the start and end parameters. The
-SwiftStack API will return everything in UTC.
+period is defined) and use that in the timestamp offsets in the start and end parameters.
+The SwiftStack API will return everything in UTC.
 
 Also, there is currently no way in the SwiftStack API to query what policies are in use on
 a particular cluster, so this information must be known.
