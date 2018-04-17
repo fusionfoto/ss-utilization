@@ -28,8 +28,8 @@ utility.
 
 ### Install in a Virtualenv
 
-1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by r unning
-   `virtualenv ss-util`
+1. Create a new [Virtualenv](https://virtualenv.pypa.io/en/stable/) by running `virtualenv
+   ss-util`
 2. `cd ss-util`
 3. `source ./bin/activate`
 4. Download the latest release from the
